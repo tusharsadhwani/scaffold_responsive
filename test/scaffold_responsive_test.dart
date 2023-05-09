@@ -5,7 +5,7 @@ import 'package:scaffold_responsive/scaffold_responsive.dart';
 
 void main() {
   test('adds one to input values', () {
-    final menuController=ResponsiveMenuController();
+    final menuController = ResponsiveMenuController();
     final scaffold = ResponsiveScaffold(
       appBar: AppBar(
           leading: IconButton(
