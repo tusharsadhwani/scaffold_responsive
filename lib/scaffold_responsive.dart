@@ -1,38 +1,88 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+/// The [ResponsiveScaffold] wraps a [Scaffold].
+/// The drawer is replaced by the [menu] [Widget].
+/// See [Scaffold] class for the documentation of most of the parameters.
+/// The following parameters are specific to the [ResponsiveScaffold]:
+/// * [menu]
+/// * [menuController]
+/// * [minimumWidthForPermanentVisibleMenu]
 class ResponsiveScaffold extends StatefulWidget {
-  /// The [ResponsiveScaffold] wraps a [Scaffold].
-  /// The drawer is replaced by the menu [Widget].
-  /// So the following fields are a copy of the [Scaffold] [Widget],
-  /// except for the drawer field.
-  /// See the the [Scaffold] class for the documentation of these fields.
+  /// See [Scaffold.appBar]
   final PreferredSizeWidget? appBar;
+
+  /// See [Scaffold.body]
   final Widget body;
+
+  /// See [Scaffold.floatingActionButton]
   final Widget? floatingActionButton;
+
+  /// See [Scaffold.floatingActionButtonLocation]
   final FloatingActionButtonLocation? floatingActionButtonLocation;
+
+  /// See [Scaffold.floatingActionButtonAnimator]
   final FloatingActionButtonAnimator? floatingActionButtonAnimator;
+
+  /// See [Scaffold.persistentFooterButtons]
   final List<Widget>? persistentFooterButtons;
+
+  /// See [Scaffold.persistentFooterAlignment]
   final AlignmentDirectional persistentFooterAlignment;
+
+  /// See [Scaffold.endDrawer]
   final Widget? endDrawer;
+
+  /// See [Scaffold.onEndDrawerChanged]
   final DrawerCallback? onEndDrawerChanged;
+
+  /// See [Scaffold.backgroundColor]
   final Color? backgroundColor;
+
+  /// See [Scaffold.bottomNavigationBar]
   final Widget? bottomNavigationBar;
+
+  /// See [Scaffold.bottomSheet]
   final Widget? bottomSheet;
+
+  /// See [Scaffold.resizeToAvoidBottomInset]
   final bool? resizeToAvoidBottomInset;
+
+  /// See [Scaffold.primary]
   final bool primary;
+
+  /// See [Scaffold.drawerEdgeDragWidth]
   final double? drawerEdgeDragWidth;
+
+  /// See [Scaffold.drawerEnableOpenDragGesture]
   final bool drawerEnableOpenDragGesture;
+
+  /// See [Scaffold.endDrawerEnableOpenDragGesture]
   final bool endDrawerEnableOpenDragGesture;
+
+  /// See [Scaffold.restorationId]
   final String? restorationId;
+
+  /// See [Scaffold.extendBody]
   final bool extendBody;
+
+  /// See [Scaffold.extendBodyBehindAppBar]
   final bool extendBodyBehindAppBar;
 
-  /// Added field, specific for the [ResponsiveScaffold]
+  ///  Your custom widget that will be shown as the menu.
   final Widget menu;
+
+  /// * [ResponsiveScaffold] < [minimumWidthForPermanentVisibleMenu]
+  ///   Drawer mode: the menu will be hidden when not used because there is not
+  /// * [ResponsiveScaffold] >= [minimumWidthForPermanentVisibleMenu]
+  ///   Permanent Visible mode: The menu can stay visible
+  ///
+  /// Default value = 700, which is about 18.5 cm or about 7.3 inch
   final double minimumWidthForPermanentVisibleMenu;
+
+  /// The [menuController] is used to open or close the menu
+  /// from outside of the [ResponsiveScaffold].
   final ResponsiveMenuController menuController;
 
   const ResponsiveScaffold({
@@ -120,6 +170,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
   @override
   void dispose() {
     _animationController.dispose();
+    widget.menuController.closeController();
     super.dispose();
   }
 
@@ -280,6 +331,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
   }
 }
 
+/// Used to send [MenuCommand]s to the [ResponsiveScaffold]
 class ResponsiveMenuController {
   final _controller = StreamController<MenuCommand>.broadcast();
 
@@ -299,18 +351,27 @@ class ResponsiveMenuController {
     _controller.sink.add(MenuCommand.closeIfNeeded);
   }
 
+  closeController() {
+    _controller.close();
+  }
+
   void addListener(void Function(dynamic command) commandListener) {
     _controller.stream.listen(commandListener);
   }
 }
 
+/// A [MenuCommand] can be send to a [ResponsiveScaffold]
+/// using the [ResponsiveMenuController]
 enum MenuCommand {
   // Show the menu
   open,
+
   // Hide the menu
   close,
+
   // If the menu is open then close it or vise versa
   toggle,
+
   // Close the menu when a menu item is selected
   // and the menu is in drawer mode.
   closeIfNeeded
