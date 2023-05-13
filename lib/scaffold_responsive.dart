@@ -9,7 +9,31 @@ import 'package:flutter/material.dart';
 /// * [menu]
 /// * [menuController]
 /// * [minimumWidthForPermanentVisibleMenu]
+/// * [menuSeparator]
 class ResponsiveScaffold extends StatefulWidget {
+  ///  Your custom widget that will be shown as the menu.
+  final Widget menu;
+
+  /// * [ResponsiveScaffold] < [minimumWidthForPermanentVisibleMenu]
+  ///   Drawer mode: the menu will be hidden when not used because there is not
+  /// * [ResponsiveScaffold] >= [minimumWidthForPermanentVisibleMenu]
+  ///   Permanent Visible mode: The menu can stay visible
+  ///
+  /// Default value = 700, which is about 18.5 cm or about 7.3 inch
+  final double minimumWidthForPermanentVisibleMenu;
+
+  /// The [menuController] is used to open or close the menu
+  /// from outside of the [ResponsiveScaffold].
+  final ResponsiveMenuController menuController;
+
+  /// A [menuSeparator] can be a VerticalDivider when the
+  /// background color of the [menu] and the [body] are the same.
+  ///
+  /// [menuSeparator] is not visible when:
+  /// * [_ResponsiveScaffoldState.drawerMode] is false
+  /// * [menuSeparator] == null
+  final Widget? menuSeparator;
+
   /// See [Scaffold.appBar]
   final PreferredSizeWidget? appBar;
 
@@ -70,26 +94,12 @@ class ResponsiveScaffold extends StatefulWidget {
   /// See [Scaffold.extendBodyBehindAppBar]
   final bool extendBodyBehindAppBar;
 
-  ///  Your custom widget that will be shown as the menu.
-  final Widget menu;
-
-  /// * [ResponsiveScaffold] < [minimumWidthForPermanentVisibleMenu]
-  ///   Drawer mode: the menu will be hidden when not used because there is not
-  /// * [ResponsiveScaffold] >= [minimumWidthForPermanentVisibleMenu]
-  ///   Permanent Visible mode: The menu can stay visible
-  ///
-  /// Default value = 700, which is about 18.5 cm or about 7.3 inch
-  final double minimumWidthForPermanentVisibleMenu;
-
-  /// The [menuController] is used to open or close the menu
-  /// from outside of the [ResponsiveScaffold].
-  final ResponsiveMenuController menuController;
-
   const ResponsiveScaffold({
     super.key,
     required this.menu,
     required this.menuController,
     this.minimumWidthForPermanentVisibleMenu = 700.0,
+    this.menuSeparator = const VerticalDivider(thickness: 3),
     this.appBar,
     required this.body,
     this.floatingActionButton,
@@ -118,7 +128,18 @@ class ResponsiveScaffold extends StatefulWidget {
 
 class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
     with SingleTickerProviderStateMixin {
-  bool isMobile = false;
+  /// [drawerMode]:
+  /// * False:
+  ///   The [ResponsiveScaffold] is wide enough to show both the
+  ///   [ResponsiveScaffold.menu] and [ResponsiveScaffold.body] can be
+  ///   displayed side by side.
+  /// * True:
+  ///   The [ResponsiveScaffold] is soo narrow that the
+  ///   [ResponsiveScaffold.menu] and [ResponsiveScaffold.body] can NOT be
+  ///   displayed side by side.
+  ///   The [ResponsiveScaffold.menu] is there for displayed on top op the
+  ///   [ResponsiveScaffold.body] and it disappears when it is no longer needed.
+  bool drawerMode = false;
   bool menuVisible = false;
   bool canBeDragged = false;
 
@@ -160,10 +181,10 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
     super.didChangeDependencies();
     final mediaQuery = MediaQuery.of(context);
     setState(() {
-      isMobile =
+      drawerMode =
           mediaQuery.size.width < widget.minimumWidthForPermanentVisibleMenu;
-      menuVisible = !isMobile;
-      _animationController.value = isMobile ? 0 : 1;
+      menuVisible = !drawerMode;
+      _animationController.value = drawerMode ? 0 : 1;
     });
   }
 
@@ -183,7 +204,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
   }
 
   void _closeMenuIfNeeded() {
-    if (isMobile) {
+    if (drawerMode) {
       _closeMenu();
     }
   }
@@ -282,7 +303,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
 
   Widget _createMenuAndBody() => AnimatedBuilder(
         animation: _animation,
-        builder: (_, __) => isMobile
+        builder: (_, __) => drawerMode
             ? _createBodyOverlappedByMenu()
             : _createMenuAndBodySideBySide(),
       );
@@ -293,7 +314,12 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold>
         ClipRect(
           child: SizedOverflowBox(
             size: Size(300 * _animation.value, double.infinity),
-            child: widget.menu,
+            child: Row(
+              children: [
+                widget.menu,
+                if (widget.menuSeparator != null) widget.menuSeparator!,
+              ],
+            ),
           ),
         ),
         Expanded(child: widget.body),

@@ -1,6 +1,6 @@
 name: scaffold_responsive
 description: A responsive scaffold widget that adjusts to your device size, for your flutter mobile and web apps.
-version: 1.1.1
+version: 1.1.2
 repository: https://github.com/tusharsadhwani/scaffold_responsive
 
 environment:
