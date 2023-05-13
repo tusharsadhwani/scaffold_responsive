@@ -13,7 +13,7 @@ class ResponsiveScaffold extends StatefulWidget {
   /// See [Scaffold.appBar]
   final PreferredSizeWidget? appBar;
 
-  /// See Scaffold.body]
+  /// See [Scaffold.body]
   final Widget body;
 
   /// See [Scaffold.floatingActionButton]
