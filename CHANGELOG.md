@@ -1,9 +1,12 @@
-## [1.1.1] - May, 2023 
+## [1.1.2] - May, 2023 (with help of Nils ten Hoeve)
+* Added ResponsiveScaffold.menuSeparator
+* Cleaned up example code
+
+## [1.1.1] - May, 2023 (with help of Nils ten Hoeve)
 * Improve pub score:
   * Added MIT license
   * Added more dart doc
   * Minor changes in pubspec yaml
-
 
 ## [1.1.0] - May, 2023 (with help of Nils ten Hoeve)
 * Implemented null safety

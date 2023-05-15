@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Center _buildBody() {
-    const _textStyle = TextStyle(color: Colors.black, fontSize: 26.0);
+    const _textStyle = TextStyle(fontSize: 26.0);
     return Center(
       child: RichText(
         text: TextSpan(
@@ -78,10 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildMenu() => Drawer(
-        backgroundColor: Colors.grey.shade300,
         child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
           children: [
             ListTile(
               title: const Text('Close the Menu'),
